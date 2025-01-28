@@ -1,14 +1,14 @@
-import { useState } from "react";
-import AppRouter from "./router/AppRouter";
-import "./App.css";
+import React from "react";
+import AppRouter from "./router/AppRouter"; // Router handling authentication
+import { ThemeProvider } from "./components/theme/theme-provider";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div>
-      <AppRouter />
-    </div>
+    <ThemeProvider>
+      <div>
+        <AppRouter /> {/* Handles routing and auth state */}
+      </div>
+    </ThemeProvider>
   );
 }
 
