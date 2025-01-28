@@ -6,6 +6,7 @@ import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
 import AddressModal from "@/components/ui/AddressModal";
+import Navbar from "@/components/ui/Navbar";
 
 import {
   getAccountBalance,
@@ -218,6 +219,8 @@ function Dashboard() {
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleAddressSubmit} // Use the new handler
       /> */}
+      <Navbar onLogout={handleLogout} />
+      <br></br>
       <div className={`space-y-6 max-w-6xl mx-auto }`}>
         <div className="space-y-2">
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
@@ -375,12 +378,6 @@ function Dashboard() {
               </PaginationContent>
             </Pagination>
           </div>
-        </div>
-
-        <div className="flex justify-end">
-          <Button variant="destructive" onClick={handleLogout}>
-            Log out
-          </Button>
         </div>
 
         {error && <p className="text-destructive font-medium">{error}</p>}
