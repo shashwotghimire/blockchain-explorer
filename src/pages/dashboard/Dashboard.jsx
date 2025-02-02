@@ -5,8 +5,10 @@ import { auth } from "../../firebase/firebase-config";
 import { signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 
-import AddressModal from "@/components/ui/AddressModal";
-import Navbar from "@/components/ui/Navbar";
+// import AddressModal from "@/components/ui/AddressModal";
+// import Navbar from "@/components/ui/Navbar";
+import CustomSidebar from "@/components/ui/CustomSidebar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 import {
   getAccountBalance,
@@ -17,6 +19,8 @@ import {
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+// import { CustomSidebar } from "@/components/ui/CustomSidebar";
 
 import {
   Pagination,
@@ -213,176 +217,183 @@ function Dashboard() {
   };
 
   return (
-    <div className={`min-h-screen bg-background p-8 `}>
-      {/* <AddressModal
+    <SidebarProvider>
+      <CustomSidebar />
+      <div className={`flex-1 min-h-screen bg-background p-8 `}>
+        {/* <AddressModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleAddressSubmit} // Use the new handler
       /> */}
-      <Navbar onLogout={handleLogout} />
-      <br></br>
-      <div className={`space-y-6 max-w-6xl mx-auto }`}>
-        <div className="space-y-2">
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-muted-foreground">Welcome back, {user?.email}</p>
-        </div>
-        <Alert className="p-6">
-          <Terminal className="h-4 w-4" />
-          <AlertTitle className="text-xl mb-4">
-            Search an Ethereum address:
-          </AlertTitle>
-          <AlertDescription>
-            <Input
-              type="text"
-              placeholder="Enter Ethereum Address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              className="w-full h-12" // Adjusted height and removed extra padding
-            />
-          </AlertDescription>
-        </Alert>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-            <h3 className="font-semibold leading-none tracking-tight">
-              Balance
-            </h3>
-            <p className="text-2xl font-bold mt-2">
-              {(balance / 1e18).toFixed(4)} ETH
-            </p>
+        <div className={`space-y-6 max-w-6xl mx-auto }`}>
+          <div className="space-y-2">
+            <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
+            <p className="text-muted-foreground">Welcome back, {user?.email}</p>
           </div>
+          <Alert className="p-6">
+            <Terminal className="h-4 w-4" />
+            <AlertTitle className="text-xl mb-4">
+              Search an Ethereum address:
+            </AlertTitle>
+            <AlertDescription>
+              <Input
+                type="text"
+                placeholder="Enter Ethereum Address"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="w-full h-12" // Adjusted height and removed extra padding
+              />
+            </AlertDescription>
+          </Alert>
 
-          <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-            <h3 className="font-semibold leading-none tracking-tight">
-              Gas Estimation
-            </h3>
-            <div className="mt-2 space-y-2">
-              <Button onClick={handleEstimateGas} variant="outline">
-                Estimate Gas
-              </Button>
-              {gasEstimation !== null && (
-                <p className="text-2xl font-bold">{gasEstimation} units</p>
-              )}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+              <h3 className="font-semibold leading-none tracking-tight">
+                Balance
+              </h3>
+              <p className="text-2xl font-bold mt-2">
+                {(balance / 1e18).toFixed(4)} ETH
+              </p>
+            </div>
+
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+              <h3 className="font-semibold leading-none tracking-tight">
+                Gas Estimation
+              </h3>
+              <div className="mt-2 space-y-2">
+                <Button onClick={handleEstimateGas} variant="outline">
+                  Estimate Gas
+                </Button>
+                {gasEstimation !== null && (
+                  <p className="text-2xl font-bold">{gasEstimation} units</p>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
+              <h3 className="font-semibold leading-none tracking-tight">
+                Token Balances
+              </h3>
+              <div className="mt-2 space-y-1">
+                {Object.entries(tokenBalance).map(([token, balance]) => (
+                  <div
+                    key={token}
+                    className="flex justify-between items-center"
+                  >
+                    <span className="font-medium">{token}:</span>
+                    <span className="font-bold">{balance}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="rounded-lg border bg-card text-card-foreground shadow-sm p-6">
-            <h3 className="font-semibold leading-none tracking-tight">
-              Token Balances
-            </h3>
-            <div className="mt-2 space-y-1">
-              {Object.entries(tokenBalance).map(([token, balance]) => (
-                <div key={token} className="flex justify-between items-center">
-                  <span className="font-medium">{token}:</span>
-                  <span className="font-bold">{balance}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
-          <div className="p-6">
-            <h3 className="font-semibold leading-none tracking-tight mb-4">
-              Transaction History
-            </h3>
-            <Table>
-              <TableCaption>A list of your recent transactions</TableCaption>
-              <TableHeader>
-                <TableRow className="hover:bg-muted/50">
-                  <TableHead className="font-semibold">
-                    Transaction Hash
-                  </TableHead>
-                  <TableHead className="font-semibold">Amount (ETH)</TableHead>
-                  <TableHead className="font-semibold">Date</TableHead>
-                  <TableHead className="font-semibold">From</TableHead>
-                  <TableHead className="font-semibold">To</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {displayedTransactions.map((transaction, index) => (
-                  <TableRow key={index} className="hover:bg-muted/50">
-                    <TableCell className="font-mono text-muted-foreground">
-                      {transaction?.hash
-                        ? `${transaction.hash.slice(
-                            0,
-                            10
-                          )}...${transaction.hash.slice(-8)}`
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {transaction?.value
-                        ? (transaction.value / 1e18).toFixed(4)
-                        : "0.0000"}
-                    </TableCell>
-                    <TableCell className="text-muted-foreground">
-                      {transaction?.timeStamp
-                        ? formatDate(transaction.timeStamp)
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell className="font-mono text-muted-foreground">
-                      {transaction?.from
-                        ? `${transaction.from.slice(
-                            0,
-                            6
-                          )}...${transaction.from.slice(-4)}`
-                        : "N/A"}
-                    </TableCell>
-                    <TableCell className="font-mono text-muted-foreground">
-                      {transaction?.to
-                        ? `${transaction.to.slice(
-                            0,
-                            6
-                          )}...${transaction.to.slice(-4)}`
-                        : "N/A"}
-                    </TableCell>
+          <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div className="p-6">
+              <h3 className="font-semibold leading-none tracking-tight mb-4">
+                Transaction History
+              </h3>
+              <Table>
+                <TableCaption>A list of your recent transactions</TableCaption>
+                <TableHeader>
+                  <TableRow className="hover:bg-muted/50">
+                    <TableHead className="font-semibold">
+                      Transaction Hash
+                    </TableHead>
+                    <TableHead className="font-semibold">
+                      Amount (ETH)
+                    </TableHead>
+                    <TableHead className="font-semibold">Date</TableHead>
+                    <TableHead className="font-semibold">From</TableHead>
+                    <TableHead className="font-semibold">To</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                </TableHeader>
+                <TableBody>
+                  {displayedTransactions.map((transaction, index) => (
+                    <TableRow key={index} className="hover:bg-muted/50">
+                      <TableCell className="font-mono text-muted-foreground">
+                        {transaction?.hash
+                          ? `${transaction.hash.slice(
+                              0,
+                              10
+                            )}...${transaction.hash.slice(-8)}`
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {transaction?.value
+                          ? (transaction.value / 1e18).toFixed(4)
+                          : "0.0000"}
+                      </TableCell>
+                      <TableCell className="text-muted-foreground">
+                        {transaction?.timeStamp
+                          ? formatDate(transaction.timeStamp)
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell className="font-mono text-muted-foreground">
+                        {transaction?.from
+                          ? `${transaction.from.slice(
+                              0,
+                              6
+                            )}...${transaction.from.slice(-4)}`
+                          : "N/A"}
+                      </TableCell>
+                      <TableCell className="font-mono text-muted-foreground">
+                        {transaction?.to
+                          ? `${transaction.to.slice(
+                              0,
+                              6
+                            )}...${transaction.to.slice(-4)}`
+                          : "N/A"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
 
-          <div className="p-4 border-t">
-            <Pagination>
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious
-                    onClick={() => page > 1 && handlePageChange(page - 1)}
-                    disabled={page === 1}
-                  />
-                </PaginationItem>
-
-                {getPageNumbers().map((pageNum, i) => (
-                  <PaginationItem key={i}>
-                    {pageNum === "..." ? (
-                      <PaginationEllipsis />
-                    ) : (
-                      <PaginationLink
-                        onClick={() => handlePageChange(pageNum)}
-                        isActive={page === pageNum}
-                      >
-                        {pageNum}
-                      </PaginationLink>
-                    )}
+            <div className="p-4 border-t">
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      onClick={() => page > 1 && handlePageChange(page - 1)}
+                      disabled={page === 1}
+                    />
                   </PaginationItem>
-                ))}
 
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() =>
-                      page < totalPages && handlePageChange(page + 1)
-                    }
-                    disabled={page === totalPages}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+                  {getPageNumbers().map((pageNum, i) => (
+                    <PaginationItem key={i}>
+                      {pageNum === "..." ? (
+                        <PaginationEllipsis />
+                      ) : (
+                        <PaginationLink
+                          onClick={() => handlePageChange(pageNum)}
+                          isActive={page === pageNum}
+                        >
+                          {pageNum}
+                        </PaginationLink>
+                      )}
+                    </PaginationItem>
+                  ))}
+
+                  <PaginationItem>
+                    <PaginationNext
+                      onClick={() =>
+                        page < totalPages && handlePageChange(page + 1)
+                      }
+                      disabled={page === totalPages}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
           </div>
-        </div>
 
-        {error && <p className="text-destructive font-medium">{error}</p>}
+          {error && <p className="text-destructive font-medium">{error}</p>}
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   );
 }
 
