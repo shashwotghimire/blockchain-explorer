@@ -102,7 +102,9 @@ function CustomSidebar() {
                 src="https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628"
                 className="w-15 h-10 rounded-full"
               />
-              <span>ETH EXP</span>
+              <span className="font-semibold leading-none tracking-tight">
+                BlockHawk
+              </span>
             </button>
           </SidebarGroupLabel>
           <SidebarGroupContent>
