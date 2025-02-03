@@ -106,6 +106,7 @@ function CustomSidebar() {
                 BlockHawk
               </span>
             </button>
+            <br></br>
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>

@@ -59,6 +59,7 @@ function Dashboard() {
   const [totalPages, setTotalPages] = useState(1);
 
   const [isModalOpen, setIsModalOpen] = useState(true);
+  const [username, setUsername] = useState("");
 
   const navigate = useNavigate();
 
@@ -172,7 +173,13 @@ function Dashboard() {
 
     return rangeWithDots;
   };
-
+  useEffect(() => {
+    if (user.displayName) {
+      setUsername(user.displayName);
+    } else {
+      setUsername(user.email);
+    }
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       if (!address) return; // Only fetch when address is available
@@ -235,7 +242,7 @@ function Dashboard() {
         <div className={`space-y-6 max-w-6xl mx-auto }`}>
           <div className="space-y-2">
             <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-            <p className="text-muted-foreground">Welcome back, {user?.email}</p>
+            <p className="text-muted-foreground">Welcome back, {username}</p>
           </div>
           <Alert className="p-6">
             <Terminal className="h-4 w-4" />
