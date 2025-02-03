@@ -49,10 +49,10 @@ function Dashboard() {
   const [address, setAddress] = useState("");
   const [balance, setBalance] = useState(null);
   const [allTransactions, setAllTransactions] = useState([]); // Store all fetched transactions
+  const [displayedTransactions, setDisplayedTransactions] = useState([]); // Initialize displayedTransactions as an empty array
   const [tokenBalance, setTokenBalance] = useState({});
   const [gasEstimation, setGasEstimation] = useState(null);
 
-  const [displayedTransactions, setDisplayedTransactions] = useState([]); // Store currently displayed transactions
   const [page, setPage] = useState(1); // Track the current page for pagination
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -88,7 +88,7 @@ function Dashboard() {
     setIsLoading(true);
     try {
       const userTransactionList = await getTransactionHistory(address);
-      if (userTransactionList && userTransactionList.result) {
+      if (userTransactionList && Array.isArray(userTransactionList.result)) {
         setAllTransactions(userTransactionList.result);
         setTotalPages(
           Math.ceil(userTransactionList.result.length / TRANSACTIONS_PER_PAGE)
@@ -96,14 +96,20 @@ function Dashboard() {
         updateDisplayedTransactions(pageNumber, userTransactionList.result);
       } else {
         setError("Error fetching transaction history");
+        setDisplayedTransactions([]); // Reset to empty array on error
       }
     } catch (error) {
       setError("Error fetching transaction history");
+      setDisplayedTransactions([]); // Reset to empty array on error
     }
     setIsLoading(false);
   };
 
   const updateDisplayedTransactions = (pageNum, transactions) => {
+    if (!Array.isArray(transactions)) {
+      setDisplayedTransactions([]);
+      return;
+    }
     const startIndex = (pageNum - 1) * TRANSACTIONS_PER_PAGE;
     const endIndex = startIndex + TRANSACTIONS_PER_PAGE;
     setDisplayedTransactions(transactions.slice(startIndex, endIndex));
@@ -310,44 +316,55 @@ function Dashboard() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {displayedTransactions.map((transaction, index) => (
-                    <TableRow key={index} className="hover:bg-muted/50">
-                      <TableCell className="font-mono text-muted-foreground">
-                        {transaction?.hash
-                          ? `${transaction.hash.slice(
-                              0,
-                              10
-                            )}...${transaction.hash.slice(-8)}`
-                          : "N/A"}
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {transaction?.value
-                          ? (transaction.value / 1e18).toFixed(4)
-                          : "0.0000"}
-                      </TableCell>
-                      <TableCell className="text-muted-foreground">
-                        {transaction?.timeStamp
-                          ? formatDate(transaction.timeStamp)
-                          : "N/A"}
-                      </TableCell>
-                      <TableCell className="font-mono text-muted-foreground">
-                        {transaction?.from
-                          ? `${transaction.from.slice(
-                              0,
-                              6
-                            )}...${transaction.from.slice(-4)}`
-                          : "N/A"}
-                      </TableCell>
-                      <TableCell className="font-mono text-muted-foreground">
-                        {transaction?.to
-                          ? `${transaction.to.slice(
-                              0,
-                              6
-                            )}...${transaction.to.slice(-4)}`
-                          : "N/A"}
+                  {Array.isArray(displayedTransactions) &&
+                  displayedTransactions.length > 0 ? (
+                    displayedTransactions.map((transaction, index) => (
+                      <TableRow key={index} className="hover:bg-muted/50">
+                        <TableCell className="font-mono text-muted-foreground">
+                          {transaction?.hash
+                            ? `${transaction.hash.slice(
+                                0,
+                                10
+                              )}...${transaction.hash.slice(-8)}`
+                            : "N/A"}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {transaction?.value
+                            ? (transaction.value / 1e18).toFixed(4)
+                            : "0.0000"}
+                        </TableCell>
+                        <TableCell className="text-muted-foreground">
+                          {transaction?.timeStamp
+                            ? formatDate(transaction.timeStamp)
+                            : "N/A"}
+                        </TableCell>
+                        <TableCell className="font-mono text-muted-foreground">
+                          {transaction?.from
+                            ? `${transaction.from.slice(
+                                0,
+                                6
+                              )}...${transaction.from.slice(-4)}`
+                            : "N/A"}
+                        </TableCell>
+                        <TableCell className="font-mono text-muted-foreground">
+                          {transaction?.to
+                            ? `${transaction.to.slice(
+                                0,
+                                6
+                              )}...${transaction.to.slice(-4)}`
+                            : "N/A"}
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center py-4">
+                        {isLoading
+                          ? "Loading transactions..."
+                          : "No transactions found"}
                       </TableCell>
                     </TableRow>
-                  ))}
+                  )}
                 </TableBody>
               </Table>
             </div>

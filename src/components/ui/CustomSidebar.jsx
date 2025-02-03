@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { getAuth, signOut } from "firebase/auth";
 
 import {
@@ -38,6 +38,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 
 function CustomSidebar() {
+  const [username, setUsername] = useState("");
   const auth = getAuth();
   const user = auth.currentUser;
   const navigate = useNavigate();
@@ -50,6 +51,13 @@ function CustomSidebar() {
         console.log(error);
       });
   };
+  useEffect(() => {
+    if (user.displayName) {
+      setUsername(user.displayName);
+    } else {
+      setUsername(user.email);
+    }
+  }, []);
   const handleProfile = () => {
     navigate("/profile");
   };
@@ -58,11 +66,6 @@ function CustomSidebar() {
       title: "Dashboard",
       url: "/",
       icon: LayoutDashboard,
-    },
-    {
-      title: "Wallet",
-      url: "/wallet",
-      icon: Wallet,
     },
     {
       title: "Analytics",
@@ -92,10 +95,14 @@ function CustomSidebar() {
         <SidebarGroup>
           <SidebarGroupLabel>
             <button
-              className="text-2xl font-bold tracking-tight"
+              className="text-2xl font-bold tracking-tight flex items-center gap-2"
               onClick={() => navigate("/")}
             >
-              $ Eth Explorer
+              <img
+                src="https://coin-images.coingecko.com/coins/images/279/large/ethereum.png?1696501628"
+                className="w-15 h-10 rounded-full"
+              />
+              <span>ETH EXP</span>
             </button>
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -104,7 +111,10 @@ function CustomSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link to={item.url} className="flex items-center gap-2">
+                    <Link
+                      to={item.url}
+                      className="flex ite</SidebarMenuButton>ms-center gap-2"
+                    >
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>
@@ -123,7 +133,7 @@ function CustomSidebar() {
                 <SidebarMenuButton>
                   <div className="flex items-center gap-2">
                     <User2 />
-                    <span>{user.email}</span>
+                    <span>{username}</span>
                     <ChevronUp className="ml-auto" />
                   </div>
                 </SidebarMenuButton>

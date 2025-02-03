@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_KEY = "H815FJQTNYEVG1SK8GQ3J1ESHC9TNHEYB4";
+const API_KEY = import.meta.env.VITE_API_KEY;
 
 const TOKEN_CONTRACTS = {
   USDT: "0xdac17f958d2ee523a2206206994597c13d831ec7",
