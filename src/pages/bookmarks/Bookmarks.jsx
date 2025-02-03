@@ -88,7 +88,7 @@ function Bookmarks() {
             </p>
           </div>
 
-          <Card>
+          <Card className="w-full max-w-6xl mx-auto">
             <CardHeader>
               <CardTitle>Add New Bookmark</CardTitle>
               <CardDescription>
@@ -128,27 +128,18 @@ function Bookmarks() {
             </Alert>
           )}
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-6 max-w-6xl mx-auto">
             {bookmarks.map((bookmark) => (
-              <Card key={bookmark.id} className="group">
+              <Card key={bookmark.id} className="group w-full">
                 <CardContent className="pt-6">
                   <div className="flex items-start justify-between">
-                    <div className="space-y-1">
+                    <div className="space-y-1 flex-1 mr-4">
                       <h3 className="font-semibold">{bookmark.label}</h3>
-                      <p className="text-sm text-muted-foreground font-mono">
+                      <p className="text-sm text-muted-foreground font-mono break-all">
                         {formatAddress(bookmark.address)}
                       </p>
                     </div>
-                    <div className="space-x-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() =>
-                          window.open(`/address/${bookmark.address}`)
-                        }
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
+                    <div className="flex items-center space-x-2 shrink-0">
                       <Button
                         variant="ghost"
                         size="icon"
