@@ -6,7 +6,7 @@ function Analytics() {
   return (
     <SidebarProvider>
       <CustomSidebar />
-      <h3>Analytics</h3>
+      <h3>404</h3>
     </SidebarProvider>
   );
 }
