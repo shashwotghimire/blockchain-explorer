@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Terminal } from "lucide-react"; // Add this import at the top with other imports
+import { Search } from "lucide-react";
 
 import { auth } from "../../firebase/firebase-config";
 import { signOut } from "firebase/auth";
@@ -245,7 +245,7 @@ function Dashboard() {
             <p className="text-muted-foreground">Welcome back, {username}</p>
           </div>
           <Alert className="p-6">
-            <Terminal className="h-4 w-4" />
+            <Search className="h-4 w-4" />
             <AlertTitle className="text-xl mb-4">
               Search an Ethereum address:
             </AlertTitle>
